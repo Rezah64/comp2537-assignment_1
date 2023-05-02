@@ -136,7 +136,7 @@ app.post('/submitUser', async (req, res) => {
   console.log("Inserted user");
   req.session.authenticated = true;
   req.session.username = username;
-  res.redirect("/loggedin");
+  res.redirect("/members");
 });
 
 
@@ -170,7 +170,7 @@ app.post('/loggingin', async (req, res) => {
     req.session.username = result[0].username;
     req.session.cookie.maxAge = expireTime;
 
-    res.redirect("/loggedin");
+    res.redirect("/members");
     return;
   }
   else {
@@ -180,7 +180,7 @@ app.post('/loggingin', async (req, res) => {
   }
 });
 
-app.get("/loggedin", (req, res) => {
+app.get("/members", (req, res) => {
   if (!req.session.authenticated) {
     res.redirect('/login');
   }
