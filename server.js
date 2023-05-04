@@ -83,44 +83,65 @@ app.get('/nosql-injection', async (req, res) => {
 
 app.get('/', (req, res) => {
 
-  res.send(`
-    <h1>Welcome!</h1>
-    <a href="/createUser">Sign Up</a>
-    <br>
-    <br>
-    <a href="/login">Log In</a>
-  `);
+  // res.send(`
+  //   <h1>Welcome!</h1>
+  //   <a href="/createUser">Sign Up</a>
+  //   <br>
+  //   <br>
+  //   <a href="/login">Log In</a>
+  // `);
   
-
+res.render('index');
 });
 
 
 app.get('/createUser', (req, res) => {
-  var html = `
-    <h2>Sign Up</h2>
-    <form action='/submitUser' method='post'>
-    <input name='username' type='text' placeholder='name'>
-      <br>
-      <br>
-    <input name='email' type='text' placeholder='email'>
-    <br>
-    <br>
-    <input name='password' type='password' placeholder='password'>
-    <br>
-    <br>
-    <button>Submit</button>
-    </form>
-    <br>
-    <br>
+  // var html = `
+  //   <h2>Sign Up</h2>
+  //   <form action='/submitUser' method='post'>
+  //   <input name='username' type='text' placeholder='name'>
+  //     <br>
+  //     <br>
+  //   <input name='email' type='text' placeholder='email'>
+  //   <br>
+  //   <br>
+  //   <input name='password' type='password' placeholder='password'>
+  //   <br>
+  //   <br>
+  //   <button>Submit</button>
+  //   </form>
+  //   <br>
+  //   <br>
 
-    `;
-  res.send(html);
+  //   `;
+  // res.send(html);
+  res.render('createUser');
 });
 
 
 
 app.get('/login', (req, res) => {
+  // var html = `
+  
+  //   <h2>log In </h2>
+  //   <form action='/loggingin' method='post'>
+  //   <input name='email' type='email' placeholder='email'>
+  //   <br>
+    
 
+  //   <input name='password' type='password' placeholder='password'>
+  //   <br>
+  //   <br>
+
+  //   <button>Submit</button>
+  //   </form>
+  //   <br>
+  //   <br>
+  //   ${req.session.loginError ? '<p style="color:red;">Invalid email/password combination</p>' : ''}
+  //   `;
+  
+  // res.send(html);
+  req.session.loginError = true;
   res.render('login', {loginError: req.session.loginError});
 });
 
@@ -162,7 +183,7 @@ app.post('/loggingin', async (req, res) => {
   if (validationResult.error != null) {
     console.log(validationResult.error);
   
-    res.render("/login");
+    res.redirect("/login");
     
     return;
   }
@@ -190,7 +211,7 @@ app.post('/loggingin', async (req, res) => {
   }
   else {
     console.log("incorrect password");
-    res.render("/login");
+    res.redirect("/login");
     return;
   }
 });
@@ -199,22 +220,21 @@ app.get("/members", (req, res) => {
   if (!req.session.authenticated) {
     res.redirect('/login');
   }
-  app.use(express.static('public'));
-  const randomImage = Math.floor(Math.random() * 3) + 1;
-  console.log(randomImage); 
-  var html = `
-    <h1>Hello ${req.session.username}!</h1>
+
+  // var html = `
+  //   <h1>Hello ${req.session.username}!</h1>
 
     
-    <img src = "/images/${randomImage}.gif" style = 'width:250px;'>
-    <br>
-    <br>
-    <form action="/logout" method="POST">
-      <button type="submit">Sign Out</button>
-    </form>
+  //   <img src = "/images/1.gif" style = 'width:250px;'>
+  //   <br>
+  //   <br>
+  //   <form action="public/logout" method="POST">
+  //     <button type="submit">Sign Out</button>
+  //   </form>
 
-    `;
-  res.send(html);
+  //   `;
+  // res.send(html);
+  res.render('members', {username: req.session.username});
 });
 
 

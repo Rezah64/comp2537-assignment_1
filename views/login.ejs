@@ -1,19 +1,21 @@
-ootstrap:
-
-Copy code<%- include("templates/header") %> 
+<%- include("templates/header") %> 
 <div class="container">
   <h1>Log In</h1>
   <form action='/loggingin' method='post'>
     <div class="form-group">
-      <label for="username">Username:</label>
-      <input name='username' type='text' class="form-control" id="username" placeholder='Enter username'>
+      <label for="email">Email:</label>
+      <input name='email' type='email' class="form-control" id="email" placeholder='Enter email'>
     </div>
     <div class="form-group">
       <label for="password">Password:</label>
       <input name='password' type='password' class="form-control" id="password" placeholder='Enter password'>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
+    <% if (loginError) { %>
+      <div class="alert alert-danger mt-3" role="alert">
+        Invalid email/password combination
+      </div>
+    <% } %>
   </form>
-  ${req.session.loginError ? '<p style="color:red;">Invalid email/password combination</p>' : ''}
 </div>
 <%- include("templates/footer") %>
