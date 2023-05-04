@@ -120,27 +120,8 @@ app.get('/createUser', (req, res) => {
 
 
 app.get('/login', (req, res) => {
-  // req.session.loginError = false
-  var html = `
-  
-    <h2>log In </h2>
-    <form action='/loggingin' method='post'>
-    <input name='email' type='email' placeholder='email'>
-    <br>
-    
 
-    <input name='password' type='password' placeholder='password'>
-    <br>
-    <br>
-
-    <button>Submit</button>
-    </form>
-    <br>
-    <br>
-    ${req.session.loginError ? '<p style="color:red;">Invalid email/password combination</p>' : ''}
-    `;
-  
-  res.send(html);
+  res.render('login', {loginError: req.session.loginError});
 });
 
 app.post('/submitUser', async (req, res) => {
@@ -163,7 +144,7 @@ app.post('/submitUser', async (req, res) => {
   }
 
   var hashedPassword = await bcrypt.hash(password, saltRounds);
-  await userCollection.insertOne({ username: username, password: hashedPassword , email: email});
+  await userCollection.insertOne({ username: username, password: hashedPassword , email: email, type: "user"});
   console.log("Inserted user");
   req.session.authenticated = true;
   req.session.username = username;
@@ -181,12 +162,12 @@ app.post('/loggingin', async (req, res) => {
   if (validationResult.error != null) {
     console.log(validationResult.error);
   
-    res.redirect("/login");
+    res.render("/login");
     
     return;
   }
 
-  const result = await userCollection.find({ email: email }).project({ username: 1, password: 1, email:1, _id: 1 }).toArray();
+  const result = await userCollection.find({ email: email }).project({ username: 1, password: 1, email:1, _id: 1, type:1 }).toArray();
 
   console.log(result);
   if (result.length != 1) {
@@ -201,12 +182,15 @@ app.post('/loggingin', async (req, res) => {
     req.session.username = result[0].username;
     req.session.cookie.maxAge = expireTime;
 
-    res.redirect("/members");
-    return;
+    if (result[0].type === "admin") {
+      res.redirect("/admin");
+    } else {
+      res.redirect("/members");
+    }
   }
   else {
     console.log("incorrect password");
-    res.redirect("/login");
+    res.render("/login");
     return;
   }
 });
@@ -232,6 +216,21 @@ app.get("/members", (req, res) => {
     `;
   res.send(html);
 });
+
+
+app.get('/admin', (req, res) => {
+  
+  res.render('admin', user.username == req.session.username);
+});
+
+
+
+
+
+
+
+
+
 
 
 app.post('/logout', (req, res) => {

@@ -1,8 +1,19 @@
-<%- include("templates/header") %> 
-    log in
-    <form action='/loggingin' method='post'>
-    <input name='username' type='text' placeholder='username'>
-    <input name='password' type='password' placeholder='password'>
-    <button>Submit</button>
-    </form>
-<%- include("templates/footer") %> 
+ootstrap:
+
+Copy code<%- include("templates/header") %> 
+<div class="container">
+  <h1>Log In</h1>
+  <form action='/loggingin' method='post'>
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input name='username' type='text' class="form-control" id="username" placeholder='Enter username'>
+    </div>
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input name='password' type='password' class="form-control" id="password" placeholder='Enter password'>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+  ${req.session.loginError ? '<p style="color:red;">Invalid email/password combination</p>' : ''}
+</div>
+<%- include("templates/footer") %>
