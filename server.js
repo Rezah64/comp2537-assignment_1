@@ -238,11 +238,23 @@ app.get("/members", (req, res) => {
 });
 
 
-app.get('/admin', (req, res) => {
+// app.get('/admin', (req, res) => {
   
-  res.render('admin', user.username == req.session.username);
+//   res.render('admin');
+// });
+
+// make a list of users from data base
+app.get('/admin', async (req, res) => {
+  const result = await userCollection.find({}).project({ username: 1, type:1 }).toArray();
+  res.render('admin', { users: result });
 });
 
+app.post('/promote', async (req, res) => {
+  const result = await userCollection.updateOne({ email: req.body.email }, { $set: { type: 'admin' } });
+  const updatedUser = await userCollection.findOne({ email: req.body.email });
+  res.render('admin', { users: updatedUser });
+});
+   
 
 
 
