@@ -190,7 +190,8 @@ app.get('/admin', async (req, res) => {
 app.post('/demoteUser', async (req, res) => {
 const mongol = await userCollection.updateOne({ type: "admin"}, { $set: { type: 'user' } });
 const result = await userCollection.find({}).project({ username: 1, type: 1 }).toArray();
-res.render('admin', { users: result, user_name: req.session.username });
+res.redirect("/admin");
+// res.render('admin', { users: result, user_name: req.session.username });
 });
 
 
@@ -198,7 +199,8 @@ res.render('admin', { users: result, user_name: req.session.username });
 app.post('/promoteUser', async (req, res) => {
 const mongol = await userCollection.updateOne({ type: "user" }, { $set: { type: 'admin' } });
 const result = await userCollection.find({}).project({ username: 1, type: 1 }).toArray();
-res.render('admin', { users: result , user_name: req.session.username });
+  res.redirect("/admin");
+// res.render('admin', { users: result , user_name: req.session.username });
 });
 
 
