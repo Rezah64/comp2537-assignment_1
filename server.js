@@ -180,14 +180,19 @@ app.get("/members", (req, res) => {
 
 
 app.get('/admin', async (req, res) => {
+  const result = await userCollection.find({ username: req.session.username }).project({ username: 1, type: 1 }).toArray();
+  if (!req.session.authenticated) {
+    res.send('<script>alert("You are not logged in to access this page."); window.location.href = "login";</script>');
+  }
+  
+  else if (req.session.authenticated === true && result[0].type === "user") {
+    res.send('<script>alert("You are not authorized to access this page."); window.location.href = "members";</script>');
+  }
+
+  else{
   const result = await userCollection.find({}).project({ username: 1, type:1 }).toArray();
   console.log(result); 
-  if (result[0].type === "admin"){
   res.render('admin', { users: result, user_name: req.session.username });
-  } else {
-    
-    res.send('<script>alert("You are not authorized to access this page."); window.location.href = "/members";</script>');
-    return;
   }
 });
 
