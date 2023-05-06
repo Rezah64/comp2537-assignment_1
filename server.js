@@ -9,12 +9,14 @@ const saltRounds = 12;
 
 
 
+
 const port = process.env.PORT || 3000;
 
 const app = express();
 
 const Joi = require("joi");
 let ejs = require('ejs');
+const { Admin } = require("mongodb");
 app.set('view engine', 'ejs');
 
 const expireTime = 1 * 60 * 60 * 1000;
@@ -245,21 +247,28 @@ app.get("/members", (req, res) => {
 
 // make a list of users from data base
 app.get('/admin', async (req, res) => {
+ 
   const result = await userCollection.find({}).project({ username: 1, type:1 }).toArray();
+  console.log(result);
+  
   res.render('admin', { users: result });
 });
 
-app.post('/promote', async (req, res) => {
-  const result = await userCollection.updateOne({ email: req.body.email }, { $set: { type: 'admin' } });
-  const updatedUser = await userCollection.findOne({ email: req.body.email });
-  res.render('admin', { users: updatedUser });
+
+
+app.post('/demoteUser', async (req, res) => {
+const mongol = await userCollection.updateOne({ type: "admin"}, { $set: { type: 'user' } });
+const result = await userCollection.find({}).project({ username: 1, type: 1 }).toArray();
+res.render('admin', { users: result });
 });
-   
 
 
 
-
-
+app.post('/promoteUser', async (req, res) => {
+const mongol = await userCollection.updateOne({ type: "user" }, { $set: { type: 'admin' } });
+const result = await userCollection.find({}).project({ username: 1, type: 1 }).toArray();
+res.render('admin', { users: result });
+});
 
 
 

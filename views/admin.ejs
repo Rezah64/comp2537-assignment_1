@@ -24,13 +24,17 @@
       <div style="display: inline-block;"><%= user.username %></div>
       <% if(user.type === "admin") { %>
         <div style="display: inline-block; margin-left: 10px;">
-          <button class="btn btn-danger btn-sm" onclick=" demoteUser(user)">Demote to User</button>
+        <form action="/demoteUser" method="POST">
+          <button class="btn btn-danger btn-sm"  id= "demote" onclick="demoteUser()">Demote to User</button>
           <button class="btn btn-success btn-sm" disabled>Promote to Admin</button>
+          </form>
         </div>
       <% } else { %>
         <div style="display: inline-block; margin-left: 10px;">
+          <form action="/promoteUser" method="POST">
           <button class="btn btn-danger btn-sm" disabled>Demote to User</button>
           <button class="btn btn-success btn-sm" onclick="promoteUser(user)">Promote to Admin</button>
+            </form>
         </div>
       <% } %>
     </li>
@@ -42,34 +46,15 @@
     <br>
     
   </form>
+ 
 </div>
 
 <%- include("templates/footer") %>
 
-<script>
-    function promoteUser(user) {
-        // Send an AJAX request to the server to promote the user at the given index
-    // Reload the page to update the user list
-            $.ajax({
-                url: '/promote',
-                method: 'POST',
-                data: { username: user.username },
-                success: function(response) {
-                    window.location.reload();
-                }
-            });
-    }
+<!-- <script>
+function demoteUser(user) {
+  /define the user to demote/
 
-    function demoteUser(user) {
- // Send an AJAX request to the server to demote the user at the given index
-    // Reload the page to update the user list
-            $.ajax({
-                url: '/demote',
-                method: 'POST',
-                data: { username: user.username },
-                success: function(response) {
-                    window.location.reload();
-                }
-            });
-    }
-</script>
+  alert(user);
+}
+</script> -->
