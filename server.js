@@ -42,7 +42,7 @@ var mongoStore = MongoStore.create({
   crypto: {
     secret: mongodb_session_secret
   }
-})
+});
 
 app.use(session({
   secret: node_session_secret,
@@ -65,10 +65,6 @@ app.get('/nosql-injection', async (req, res) => {
   const schema = Joi.string().max(20).required();
   const validationResult = schema.validate(username);
 
-  //If we didn't use Joi to validate and check for a valid URL parameter below
-  // we could run our userCollection.find and it would be possible to attack.
-  // A URL parameter of user[$ne]=name would get executed as a MongoDB command
-  // and may result in revealing information about all users or a successful
   // login without knowing the correct password.
   if (validationResult.error != null) {
     console.log(validationResult.error);
@@ -83,69 +79,26 @@ app.get('/nosql-injection', async (req, res) => {
   res.send(`<h1>Hello ${username}</h1>`);
 });
 
-app.get('/', (req, res) => {
 
-  // res.send(`
-  //   <h1>Welcome!</h1>
-  //   <a href="/createUser">Sign Up</a>
-  //   <br>
-  //   <br>
-  //   <a href="/login">Log In</a>
-  // `);
-  
+
+app.get('/', (req, res) => {
 res.render('index');
 });
 
 
 app.get('/createUser', (req, res) => {
-  // var html = `
-  //   <h2>Sign Up</h2>
-  //   <form action='/submitUser' method='post'>
-  //   <input name='username' type='text' placeholder='name'>
-  //     <br>
-  //     <br>
-  //   <input name='email' type='text' placeholder='email'>
-  //   <br>
-  //   <br>
-  //   <input name='password' type='password' placeholder='password'>
-  //   <br>
-  //   <br>
-  //   <button>Submit</button>
-  //   </form>
-  //   <br>
-  //   <br>
-
-  //   `;
-  // res.send(html);
   res.render('createUser');
 });
 
 
 
 app.get('/login', (req, res) => {
-  // var html = `
-  
-  //   <h2>log In </h2>
-  //   <form action='/loggingin' method='post'>
-  //   <input name='email' type='email' placeholder='email'>
-  //   <br>
-    
 
-  //   <input name='password' type='password' placeholder='password'>
-  //   <br>
-  //   <br>
-
-  //   <button>Submit</button>
-  //   </form>
-  //   <br>
-  //   <br>
-  //   ${req.session.loginError ? '<p style="color:red;">Invalid email/password combination</p>' : ''}
-  //   `;
-  
-  // res.send(html);
   req.session.loginError = false;
   res.render('login', {loginError: req.session.loginError});
 });
+
+
 
 app.post('/submitUser', async (req, res) => {
   var username = req.body.username;
@@ -176,19 +129,16 @@ app.post('/submitUser', async (req, res) => {
 
 
 app.post('/loggingin', async (req, res) => {
- 
   var password = req.body.password;
   var email = req.body.email;
- 
   const schema = Joi.string().email().required();
   const validationResult = schema.validate(email);
   if (validationResult.error != null) {
     console.log(validationResult.error);
-  
     res.redirect("/login");
-    
     return;
   }
+
 
   const result = await userCollection.find({ email: email }).project({ username: 1, password: 1, email:1, _id: 1, type:1 }).toArray();
 
@@ -218,40 +168,23 @@ app.post('/loggingin', async (req, res) => {
   }
 });
 
+
 app.get("/members", (req, res) => {
   if (!req.session.authenticated) {
     res.redirect('/login');
   }
-
-  // var html = `
-  //   <h1>Hello ${req.session.username}!</h1>
-
-    
-  //   <img src = "/images/1.gif" style = 'width:250px;'>
-  //   <br>
-  //   <br>
-  //   <form action="public/logout" method="POST">
-  //     <button type="submit">Sign Out</button>
-  //   </form>
-
-  //   `;
-  // res.send(html);
   res.render('members', {username: req.session.username});
 });
 
 
-// app.get('/admin', (req, res) => {
-  
-//   res.render('admin');
-// });
 
-// make a list of users from data base
 app.get('/admin', async (req, res) => {
- 
   const result = await userCollection.find({}).project({ username: 1, type:1 }).toArray();
-  console.log(result);
-  
-  res.render('admin', { users: result });
+  console.log(result); 
+  const username = req.session.username;
+
+  console.log(username); 
+  res.render('admin', { users: result, username: username });
 });
 
 
@@ -276,36 +209,21 @@ res.render('admin', { users: result });
 
 app.post('/logout', (req, res) => {
   req.session.destroy();
-  // 
   res.redirect('/login');
-  // res.send(html);
 });
 
 
-// app.get('/cat/:id', (req, res) => {
-
-//   var cat = req.params.id;
-
-//   if (cat == 1) {
-//     res.send("Fluffy: <img src='/images/fluffy.gif' style='width:250px;'>");
-//   }
-//   else if (cat == 2) {
-//     res.send("Socks: <img src='/images/socks.gif' style='width:250px;'>");
-//   }
-//   else if (cat == 3) {
-//     res.send("giphy.gif: <img src='/images/giphy.gif' style='width:250px;'>");
-//   }else {
-//     res.send("Invalid cat id: " + cat);
-//   }
-// });
-
 
 app.use(express.static(__dirname + "/public"));
+
+
 
 app.get("*", (req, res) => {
   res.status(404);
   res.send("Page not found - 404");
 })
+
+
 
 app.listen(port, () => {
   console.log("Node application listening on port " + port);
