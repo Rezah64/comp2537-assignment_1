@@ -94,7 +94,7 @@ app.get('/createUser', (req, res) => {
 
 app.get('/login', (req, res) => {
 
-  req.session.loginError = false;
+  req.session.loginError = true;
   res.render('login', {loginError: req.session.loginError});
 });
 
@@ -163,7 +163,8 @@ app.post('/loggingin', async (req, res) => {
   }
   else {
     console.log("incorrect password");
-    res.redirect("/login");
+    req.session.loginError = false;
+    res.render('login', {loginError: req.session.loginError});
     return;
   }
 });
@@ -181,8 +182,13 @@ app.get("/members", (req, res) => {
 app.get('/admin', async (req, res) => {
   const result = await userCollection.find({}).project({ username: 1, type:1 }).toArray();
   console.log(result); 
-
+  if (result[0].type === "admin"){
   res.render('admin', { users: result, user_name: req.session.username });
+  } else {
+    
+    res.send('<script>alert("You are not authorized to access this page."); window.location.href = "/members";</script>');
+    return;
+  }
 });
 
 
