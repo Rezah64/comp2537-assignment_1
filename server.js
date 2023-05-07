@@ -155,11 +155,11 @@ app.post('/loggingin', async (req, res) => {
     req.session.username = result[0].username;
     req.session.cookie.maxAge = expireTime;
 
-    if (result[0].type === "admin") {
-      res.redirect("/admin");
-    } else {
+    // if (result[0].type === "admin") {
+    //   res.redirect("/admin");
+    // } else {
       res.redirect("/members");
-    }
+    // }
   }
   else {
     console.log("incorrect password");
@@ -187,7 +187,7 @@ app.get('/admin', async (req, res) => {
   }
   
   else if (req.session.authenticated === true && result[0].type === "user") {
-    res.send('<script>alert("Error 403 - Forbidden."); window.location.href = "members";</script>');
+    res.send('<script>alert("Error 403 - Forbidden. You do not have permission to access this page."); window.location.href = "members";</script>');
   }
 
   else{
