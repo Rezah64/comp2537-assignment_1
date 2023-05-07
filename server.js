@@ -187,7 +187,9 @@ app.get('/admin', async (req, res) => {
   }
   
   else if (req.session.authenticated === true && result[0].type === "user") {
-    res.send('<script>alert("You are not authorized to access this page."); window.location.href = "members";</script>');
+    res.status(403)
+    res.render('403');
+    
   }
 
   else{
