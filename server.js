@@ -6,7 +6,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
 const saltRounds = 12;
-
+const { ObjectId } = require('mongodb');
 
 
 
@@ -200,24 +200,21 @@ app.get('/admin', async (req, res) => {
 
 
 app.post('/demoteUser', async (req, res) => {
-const mongol = await userCollection.updateOne({ type: "admin"}, { $set: { type: 'user' } });
+  console.log("demoteUser");
+  const userId = req.body.userId;
+  const updateOne = await userCollection.updateOne({ _id: new ObjectId(userId) }, { $set: { type: 'user' } });
 const result = await userCollection.find({}).project({ username: 1, type: 1 }).toArray();
-res.redirect("/admin");
-// res.render('admin', { users: result, user_name: req.session.username });
+res.redirect("/admin")
 });
 
 
 
 app.post('/promoteUser', async (req, res) => {
-const mongol = await userCollection.updateOne({ type: "user" }, { $set: { type: 'admin' } });
-const result = await userCollection.find({}).project({ username: 1, type: 1 }).toArray();
-  res.redirect("/admin");
-// res.render('admin', { users: result , user_name: req.session.username });
+  const userId = req.body.userId;
+  const updateOne = await userCollection.updateOne({ _id: new ObjectId(userId) }, { $set: { type: 'admin' } });
+  const result = await userCollection.find({}).project({ username: 1, type: 1 }).toArray();
+  res.redirect("/admin")
 });
-
-
-
-
 
 app.post('/logout', (req, res) => {
   req.session.destroy();

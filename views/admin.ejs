@@ -20,26 +20,28 @@
 <div> <h2> Users:</h2></div>
 <br>
 <ul>
-  <% users.forEach(user => { %>
-    <li style="border: 1px solid black; padding: 10px;list-style-type: none;">
-      <div style="display: inline-block "> <%= user.username %></div>
-      <% if(user.type === "admin") { %>
-        <div style="display: inline-block;">
+<% users.forEach(user => { %>
+  <li style="border: 1px solid black; padding: 10px;list-style-type: none;">
+    <div style="display: inline-block "> <%= user.username %></div>
+    <% if(user.type === "admin") { %>
+      <div style="display: inline-block;">
         <form action="/demoteUser" method="POST">
-          <button class="btn btn-danger btn-sm ml-4 mr-4 "  id= "demote" onclick="demoteUser()" style = "border-radius: 20px;">Demote to User</button>
+          <input type="hidden" name="userId" value="<%= user._id %>">
+          <button class="btn btn-danger btn-sm ml-4 mr-4 " type="submit" style = "border-radius: 20px;">Demote to User</button>
           <button class="btn btn-success btn-sm ml-4 mr-4" disabled style = "border-radius: 20px;">Promote to Admin</button>
-          </form>
-        </div>
-      <% } else { %>
-        <div style="display: inline-block; margin-left: 10px;">
-          <form action="/promoteUser" method="POST">
+        </form>
+      </div>
+    <% } else { %>
+      <div style="display: inline-block; margin-left: 10px;">
+        <form action="/promoteUser" method="POST">
+          <input type="hidden" name="userId" value="<%= user._id %>">
           <button class="btn btn-danger btn-sm ml-4 mr-4" disabled style = "border-radius: 20px;">Demote to User</button>
-          <button class="btn btn-success btn-sm ml-4 mr-4" onclick="promoteUser(user)"style = "border-radius: 20px;">Promote to Admin</button>
-            </form>
-        </div>
-      <% } %>
-    </li>
-  <% }); %>
+          <button class="btn btn-success btn-sm ml-4 mr-4" style = "border-radius: 20px;">Promote to Admin</button>
+        </form>
+      </div>
+    <% } %>
+  </li>
+<% }); %>
 </ul>
   <form action="/logout" method="POST">
     <button type="submit" class="btn btn-primary mt-4">Sign Out</button>
