@@ -187,9 +187,7 @@ app.get('/admin', async (req, res) => {
   }
   
   else if (req.session.authenticated === true && result[0].type === "user") {
-    res.status(403)
-    res.render('403');
-    
+    res.send('<script>alert("Error 403 - Forbidden."); window.location.href = "members";</script>');
   }
 
   else{
